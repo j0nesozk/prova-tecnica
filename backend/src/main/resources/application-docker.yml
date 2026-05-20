@@ -1,0 +1,17 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://db:5432/cruddb
+    username: ${POSTGRES_USER:crud}
+    password: ${POSTGRES_PASSWORD:crud}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+  h2:
+    console:
+      enabled: false
+
+app:
+  uploads:
+    dir: /data/uploads
