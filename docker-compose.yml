@@ -1,0 +1,44 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: crud-db
+    environment:
+      POSTGRES_DB: cruddb
+      POSTGRES_USER: crud
+      POSTGRES_PASSWORD: crud
+    ports:
+      - "5432:5432"
+    volumes:
+      - crud-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U crud -d cruddb"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build: ./backend
+    container_name: crud-backend
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      POSTGRES_USER: crud
+      POSTGRES_PASSWORD: crud
+    ports:
+      - "8080:8080"
+    volumes:
+      - crud-uploads:/data/uploads
+
+  frontend:
+    build: ./frontend
+    container_name: crud-frontend
+    depends_on:
+      - backend
+    ports:
+      - "4200:80"
+
+volumes:
+  crud-pgdata:
+  crud-uploads:
